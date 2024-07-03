@@ -2,20 +2,30 @@
 
 const express = require("express");
 const app = express();
-const dbConnect = require("./config/dbConfig")
+const contactRouter = require("./routes/contactRoute")
+const loginRouter = require("./routes/loginRoute")
+const methodOverride = require("method-override")
 
+// DB Connection
+const dbConnect = require("./config/dbConfig")
 dbConnect();
 
-const router = require("./routes/contactRoute")
+// View Engine
+app.set("view engine", "ejs");
+app.set("views", "./views");
+app.use(express.static("./public"));
 
 app.use(express.json());
+app.use(express.urlencoded({ extended: true}))
+app.use(methodOverride("_method"))
 
-app.get("/", (req, res) => {
-  res.send("Hello Node JS I am Aiden");
-})
 
-app.use("/contacts", router)
+// Route
+app.use("/", loginRouter)
+app.use("/contacts", contactRouter)
 
+
+// Execute
 app.listen(3000, ()=> {
   console.log("Server is On");
 })

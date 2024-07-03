@@ -1,24 +1,27 @@
 const express = require("express");
 const router = express.Router();
+const cookieParser = require("cookie-parser");
+const checkLogin = require("../middlewares/checkLogin.js")
 
-const {getAllContacts, createContact} = require("../controllers/contactController.js")
+
+const {getAllContacts, createContact, addContactForm, getContact, updateContact, deleteContact} = require("../controllers/contactController.js")
+
+
+
+router.use(cookieParser());
 
 router
   .route("/")
-  .get(getAllContacts)
-  .post(createContact)
+  .get(checkLogin, getAllContacts)
 
+router
+  .route("/add")
+  .get(checkLogin, addContactForm).post(checkLogin, createContact)
 
 router
   .route("/:id")
-  .get((req, res) => {
-    res.send(`view one contact ${req.params.id}`)
-  })
-  .put((req, res) => {
-    res.send(`edit one contact ${req.params.id}`)
-  })
-  .delete((req, res) => {
-    res.send(`delete one contact ${req.params.id}`)
-  })
+  .get(checkLogin, getContact)
+  .put(checkLogin, updateContact)
+  .delete(checkLogin, deleteContact)
 
 module.exports = router;
